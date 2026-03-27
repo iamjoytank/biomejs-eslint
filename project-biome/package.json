@@ -1,0 +1,20 @@
+{
+  "name": "project-biome",
+  "version": "1.0.0",
+  "description": "TypeScript project using Biome for linting and formatting",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "check": "biome check .",
+    "check:fix": "biome check --apply .",
+    "typecheck": "tsc --noEmit",
+    "benchmark:lint": "node scripts/benchmark.js lint",
+    "benchmark:fix": "node scripts/benchmark.js fix",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "husky": "^9.1.7",
+    "typescript": "^5.5.0"
+  }
+}
