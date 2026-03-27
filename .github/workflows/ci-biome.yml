@@ -1,0 +1,45 @@
+name: CI - Biome
+
+on:
+  push:
+    paths:
+      - 'project-biome/**'
+  pull_request:
+    paths:
+      - 'project-biome/**'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: project-biome
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: project-biome/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Biome check (timed)
+        run: |
+          echo "## Biome Benchmark" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Step | Time |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|------|" >> $GITHUB_STEP_SUMMARY
+          START=$(date +%s%N)
+          npm run check --silent || true
+          END=$(date +%s%N)
+          ELAPSED=$(( (END - START) / 1000000 ))
+          echo "| Biome check (lint + format) | ${ELAPSED}ms |" >> $GITHUB_STEP_SUMMARY
+          echo "Biome check completed in ${ELAPSED}ms"
+
+      - name: TypeScript type check
+        run: npm run typecheck
